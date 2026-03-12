@@ -24,14 +24,15 @@ async function loadUsers() {
 
       row.innerHTML = `
         <td>${user.id}</td>
+        <td>${user.mssv}</td>
         <td>${user.name}</td>
         <td>
 
-          <button class="btn" onclick="viewUser('${user.id}')">
+          <button class="btn" onclick="viewUser(${user.id})">
             View
           </button>
 
-          <button class="delete btn" onclick="deleteUser('${user.id}')">
+          <button class="delete btn" onclick="deleteUser(${user.id})">
             Delete
           </button>
 
@@ -62,10 +63,10 @@ document
 
     e.preventDefault();
 
-    const id = document.getElementById("id").value.trim();
+    const mssv = document.getElementById("id").value.trim();
     const name = document.getElementById("name").value.trim();
 
-    if (!id || !name) {
+    if (!mssv || !name) {
       alert("Please fill all fields");
       return;
     }
@@ -77,7 +78,7 @@ document
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ id, name })
+        body: JSON.stringify({ mssv, name })
       });
 
       document.getElementById("id").value = "";
@@ -101,7 +102,6 @@ document
 async function deleteUser(id) {
 
   const confirmDelete = confirm("Delete this user?");
-
   if (!confirmDelete) return;
 
   try {
@@ -125,31 +125,81 @@ async function deleteUser(id) {
    VIEW USER DETAIL
 ======================= */
 
-async function viewUser(id) {
+async function viewUser(id){
 
-  try {
+  const res = await fetch(`${API}/${id}`);
+  const user = await res.json();
 
-    const res = await fetch(`${API}/${id}`);
-    const user = await res.json();
+  document.getElementById("detailId").textContent = user.mssv;
+  document.getElementById("detailName").textContent = user.name;
 
-    document.getElementById("detailId").textContent = user.id;
-    document.getElementById("detailName").textContent = user.name;
+  document.getElementById("editId").value = user.id;
+  document.getElementById("editName").value = user.name;
 
-    document.getElementById("detailModal").style.display = "block";
+  document.getElementById("viewMode").style.display = "block";
+  document.getElementById("editMode").style.display = "none";
 
-  } catch (err) {
+  document.getElementById("detailModal").style.display = "flex";
+}
 
-    alert("Error loading user");
+
+/* =======================
+   ENABLE EDIT
+======================= */
+
+function enableEdit(){
+  document.getElementById("viewMode").style.display = "none";
+  document.getElementById("editMode").style.display = "block";
+}
+
+
+/* =======================
+   CANCEL EDIT
+======================= */
+
+function cancelEdit(){
+  document.getElementById("viewMode").style.display = "block";
+  document.getElementById("editMode").style.display = "none";
+}
+
+
+/* =======================
+   UPDATE USER
+======================= */
+
+async function updateUser(){
+
+  const id = document.getElementById("editId").value;
+  const name = document.getElementById("editName").value;
+
+  try{
+
+    await fetch(`${API}/${id}`,{
+      method:"PUT",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({ name })
+    });
+
+    closeModal();
+    loadUsers();
+
+  }catch(err){
+
+    alert("Error updating user");
 
   }
 
 }
 
 
-function closeModal() {
+/* =======================
+   CLOSE MODAL
+======================= */
 
-  document.getElementById("detailModal").style.display = "none";
-
+function closeModal(){
+  document.getElementById("detailModal").style.display="none";
 }
 
 
