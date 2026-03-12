@@ -3,85 +3,158 @@ const API = "https://crud-user-uzzz.onrender.com/users";
 const table = document.getElementById("users");
 const loading = document.getElementById("loading");
 
-/* LOAD USERS */
+/* =======================
+   LOAD USERS
+======================= */
 
 async function loadUsers() {
 
   loading.style.display = "block";
 
-  const res = await fetch(API);
-  const data = await res.json();
+  try {
 
-  table.innerHTML = "";
+    const res = await fetch(API);
+    const data = await res.json();
 
-  data.forEach(user => {
+    table.innerHTML = "";
 
-    const row = document.createElement("tr");
+    data.forEach(user => {
 
-    row.innerHTML = `
-      <td>${user.id}</td>
-      <td>${user.name}</td>
-      <td>
-        <button class="delete btn" onclick="deleteUser('${user.id}')">
-          Delete
-        </button>
-      </td>
-    `;
+      const row = document.createElement("tr");
 
-    table.appendChild(row);
+      row.innerHTML = `
+        <td>${user.id}</td>
+        <td>${user.name}</td>
+        <td>
 
-  });
+          <button class="btn" onclick="viewUser('${user.id}')">
+            View
+          </button>
+
+          <button class="delete btn" onclick="deleteUser('${user.id}')">
+            Delete
+          </button>
+
+        </td>
+      `;
+
+      table.appendChild(row);
+
+    });
+
+  } catch (err) {
+
+    alert("Error loading users");
+
+  }
 
   loading.style.display = "none";
 }
 
 
-/* ADD USER */
+/* =======================
+   ADD USER
+======================= */
 
-document.getElementById("userForm")
-.addEventListener("submit", async (e) => {
+document
+  .getElementById("userForm")
+  .addEventListener("submit", async (e) => {
 
-  e.preventDefault();
+    e.preventDefault();
 
-  const id = document.getElementById("id").value;
-  const name = document.getElementById("name").value;
+    const id = document.getElementById("id").value.trim();
+    const name = document.getElementById("name").value.trim();
 
-  await fetch(API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ id, name })
+    if (!id || !name) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    try {
+
+      await fetch(API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id, name })
+      });
+
+      document.getElementById("id").value = "";
+      document.getElementById("name").value = "";
+
+      loadUsers();
+
+    } catch (err) {
+
+      alert("Error adding user");
+
+    }
+
   });
 
-  /* reset form */
 
-  document.getElementById("id").value = "";
-  document.getElementById("name").value = "";
-
-  /* update UI */
-
-  loadUsers();
-
-});
-
-
-/* DELETE USER */
+/* =======================
+   DELETE USER
+======================= */
 
 async function deleteUser(id) {
 
   const confirmDelete = confirm("Delete this user?");
+
   if (!confirmDelete) return;
 
-  await fetch(`${API}/${id}`, {
-    method: "DELETE"
-  });
+  try {
 
-  loadUsers();
+    await fetch(`${API}/${id}`, {
+      method: "DELETE"
+    });
+
+    loadUsers();
+
+  } catch (err) {
+
+    alert("Error deleting user");
+
+  }
 
 }
 
 
-/* INITIAL LOAD */
+/* =======================
+   VIEW USER DETAIL
+======================= */
+
+async function viewUser(id) {
+
+  try {
+
+    const res = await fetch(`${API}/${id}`);
+    const user = await res.json();
+
+    document.getElementById("detailId").textContent = user.id;
+    document.getElementById("detailName").textContent = user.name;
+
+    document.getElementById("detailModal").style.display = "block";
+
+  } catch (err) {
+
+    alert("Error loading user");
+
+  }
+
+}
+
+
+function closeModal() {
+
+  document.getElementById("detailModal").style.display = "none";
+
+}
+
+
+/* =======================
+   INITIAL LOAD
+======================= */
 
 loadUsers();
