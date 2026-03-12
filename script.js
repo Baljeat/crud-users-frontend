@@ -74,21 +74,26 @@ document
 
   try {
 
-    const res = await fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mssv, name })
+    const res = await fetch(API,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({mssv,name})
     });
 
-    if (!res.ok) {
-      alert("MSSV already exists");
+    if(!res.ok){
+
+      const error = await res.json();
+      alert(error.error || "User already exists");
+
       return;
     }
 
     document.getElementById("userForm").reset();
     loadUsers();
 
-  } catch (err) {
+  }catch(err){
 
     alert("Error adding user");
 
@@ -207,10 +212,18 @@ async function updateUser(){
       headers:{
         "Content-Type":"application/json"
       },
-      body:JSON.stringify({ mssv, name })
+      body:JSON.stringify({mssv,name})
     });
 
-    if(!res.ok) throw new Error("Update failed");
+    if(!res.ok){
+
+      const error = await res.json();
+      alert(error.error || "Update failed");
+
+      return;
+    }
+
+    alert("User updated successfully");
 
     closeModal();
     loadUsers();
