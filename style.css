@@ -123,30 +123,89 @@ margin-bottom:15px;
 color:#777;
 display:none;
 }
+
+/* Overlay nền */
+
 .modal{
 display:none;
 position:fixed;
-z-index:100;
+z-index:1000;
 left:0;
 top:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.4);
+background:rgba(0,0,0,0.35);
+backdrop-filter:blur(4px);
+animation:fadeIn .25s ease;
 }
+
+/* Hộp modal */
 
 .modal-content{
-background:white;
-margin:10% auto;
-padding:20px;
-border-radius:8px;
-width:320px;
-box-shadow:0 5px 20px rgba(0,0,0,0.2);
+background:#ffffff;
+margin:8% auto;
+padding:28px 32px;
+border-radius:14px;
+width:340px;
+box-shadow:
+0 20px 60px rgba(0,0,0,0.15),
+0 8px 20px rgba(0,0,0,0.08);
+animation:popUp .25s ease;
+}
+.modal-content span{
+font-weight:500;
+color:#222;
+}
+/* Tiêu đề */
+
+.modal-content h3{
+margin-bottom:15px;
+font-size:20px;
+font-weight:600;
+color:#333;
 }
 
+/* Nội dung */
+
+.modal-content p{
+margin:6px 0;
+font-size:15px;
+color:#444;
+}
+
+/* nút close */
+
 .close{
-float:right;
+position:absolute;
+right:18px;
+top:14px;
+font-size:20px;
 cursor:pointer;
-font-size:22px;
+color:#777;
+transition:0.2s;
+}
+
+.close:hover{
+color:#000;
+transform:scale(1.2);
+}
+
+/* animation */
+
+@keyframes fadeIn{
+from{opacity:0}
+to{opacity:1}
+}
+
+@keyframes popUp{
+from{
+transform:scale(.9);
+opacity:0;
+}
+to{
+transform:scale(1);
+opacity:1;
+}
 }
 
 /* FOOTER */
