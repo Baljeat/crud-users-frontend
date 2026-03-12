@@ -28,11 +28,14 @@ async function loadUsers() {
 
       row.innerHTML = `
         <td>${user.id}</td>
-        <td>${user.mssv}</td>
         <td>${user.name}</td>
         <td>
-          <button class="btn" onclick="viewUser(${user.id})">View</button>
-          <button class="delete btn" onclick="deleteUser(${user.id})">Delete</button>
+          <button class="btn" onclick="viewUser(${user.id})">
+            View
+          </button>
+          <button class="delete btn" onclick="deleteUser(${user.id})">
+            Delete
+          </button>
         </td>
       `;
 
@@ -64,41 +67,24 @@ document
 
   e.preventDefault();
 
-  const mssv = document.getElementById("id").value.trim();
-  const name = document.getElementById("name").value.trim();
+  const name = document
+  .getElementById("name")
+  .value.trim();
 
-  if (!mssv || !name) {
-    alert("Please fill all fields");
+  if (!name) {
+    alert("Please enter name");
     return;
   }
 
-  try {
+  const res = await fetch(API,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({ name })
+  });
 
-    const res = await fetch(API,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({mssv,name})
-    });
-
-    if(!res.ok){
-
-      const error = await res.json();
-      alert(error.error || "User already exists");
-
-      return;
-    }
-
-    document.getElementById("userForm").reset();
-    loadUsers();
-
-  }catch(err){
-
-    alert("Error adding user");
-
-  }
-
+  loadUsers();
 });
 
 
@@ -145,11 +131,9 @@ async function viewUser(id){
     const user = await res.json();
 
     document.getElementById("detailDbId").textContent = user.id;
-    document.getElementById("detailId").textContent = user.mssv;
     document.getElementById("detailName").textContent = user.name;
 
     document.getElementById("editDbId").value = user.id;
-    document.getElementById("editMssv").value = user.mssv;
     document.getElementById("editName").value = user.name;
 
     document.getElementById("viewMode").style.display = "block";
@@ -197,43 +181,18 @@ function cancelEdit(){
 async function updateUser(){
 
   const id = document.getElementById("editDbId").value;
-  const mssv = document.getElementById("editMssv").value.trim();
-  const name = document.getElementById("editName").value.trim();
+  const name = document.getElementById("editName").value;
 
-  if(!mssv || !name){
-    alert("Fields cannot be empty");
-    return;
-  }
+  await fetch(`${API}/${id}`,{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({ name })
+  });
 
-  try{
-
-    const res = await fetch(`${API}/${id}`,{
-      method:"PUT",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({mssv,name})
-    });
-
-    if(!res.ok){
-
-      const error = await res.json();
-      alert(error.error || "Update failed");
-
-      return;
-    }
-
-    alert("User updated successfully");
-
-    closeModal();
-    loadUsers();
-
-  }catch(err){
-
-    alert("Error updating user");
-
-  }
-
+  closeModal();
+  loadUsers();
 }
 
 
