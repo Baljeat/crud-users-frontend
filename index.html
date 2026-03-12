@@ -12,6 +12,14 @@
 
 <div class="card">
 
+<h2>Add User</h2>
+
+<form id="userForm">
+<input type="text" id="id" placeholder="Student ID" required>
+<input type="text" id="name" placeholder="Name" required>
+<button type="submit" class="btn">Add User</button>
+</form>
+
 <div id="loading">Loading users...</div>
 
 <table>
@@ -19,13 +27,12 @@
 <tr>
 <th>ID</th>
 <th>Name</th>
+<th>Action</th>
 </tr>
 </thead>
 
 <tbody id="users"></tbody>
 </table>
-
-<button class="btn" onclick="reloadUsers()">Reload Users</button>
 
 </div>
 

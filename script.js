@@ -1,80 +1,87 @@
-const API = "https://crud-user-uzzz.onrender.com/users"
+const API = "https://crud-user-uzzz.onrender.com/users";
 
-const table = document.getElementById("users")
-const loading = document.getElementById("loading")
+const table = document.getElementById("users");
+const loading = document.getElementById("loading");
 
-async function loadUsers(){
+/* LOAD USERS */
 
-loading.style.display="block"
+async function loadUsers() {
 
-const res = await fetch(API)
-const data = await res.json()
+  loading.style.display = "block";
 
-table.innerHTML=""
+  const res = await fetch(API);
+  const data = await res.json();
 
-data.forEach(user=>{
+  table.innerHTML = "";
 
-const row=document.createElement("tr")
+  data.forEach(user => {
 
-row.innerHTML=`
-<td>${user.id}</td>
-<td>${user.name}</td>
-<td>
-<button class="delete btn" onclick="deleteUser('${user.id}')">
-Delete
-</button>
-</td>
-`
+    const row = document.createElement("tr");
 
-table.appendChild(row)
+    row.innerHTML = `
+      <td>${user.id}</td>
+      <td>${user.name}</td>
+      <td>
+        <button class="delete btn" onclick="deleteUser('${user.id}')">
+          Delete
+        </button>
+      </td>
+    `;
 
-})
+    table.appendChild(row);
 
-loading.style.display="none"
+  });
 
+  loading.style.display = "none";
 }
 
-function reloadUsers(){
-loadUsers()
-}
 
-/* CREATE USER */
+/* ADD USER */
 
 document.getElementById("userForm")
-.addEventListener("submit",async e=>{
+.addEventListener("submit", async (e) => {
 
-e.preventDefault()
+  e.preventDefault();
 
-const id=document.getElementById("id").value
-const name=document.getElementById("name").value
+  const id = document.getElementById("id").value;
+  const name = document.getElementById("name").value;
 
-await fetch(API,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({id,name})
-})
+  await fetch(API, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ id, name })
+  });
 
-document.getElementById("id").value=""
-document.getElementById("name").value=""
+  /* reset form */
 
-loadUsers()
+  document.getElementById("id").value = "";
+  document.getElementById("name").value = "";
 
-})
+  /* update UI */
+
+  loadUsers();
+
+});
+
 
 /* DELETE USER */
 
-async function deleteUser(id){
+async function deleteUser(id) {
 
-if(!confirm("Delete this user?")) return
+  const confirmDelete = confirm("Delete this user?");
+  if (!confirmDelete) return;
 
-await fetch(`${API}/${id}`,{
-method:"DELETE"
-})
+  await fetch(`${API}/${id}`, {
+    method: "DELETE"
+  });
 
-loadUsers()
+  loadUsers();
 
 }
 
-loadUsers()
+
+/* INITIAL LOAD */
+
+loadUsers();
