@@ -3,6 +3,7 @@ const API = "https://crud-user-uzzz.onrender.com/users";
 const table = document.getElementById("users");
 const loading = document.getElementById("loading");
 
+
 /* =======================
    LOAD USERS
 ======================= */
@@ -12,16 +13,17 @@ async function loadUsers() {
   loading.style.display = "block";
 
   try {
+
     const res = await fetch(API);
 
-    if (!res.ok) {
-      throw new Error("Server error");
-    }
+    if (!res.ok) throw new Error("Server error");
 
     const data = await res.json();
+
     table.innerHTML = "";
 
     data.forEach(user => {
+
       const row = document.createElement("tr");
 
       row.innerHTML = `
@@ -35,14 +37,20 @@ async function loadUsers() {
       `;
 
       table.appendChild(row);
+
     });
 
   } catch (err) {
+
     console.error(err);
     alert("Error loading users");
+
   } finally {
+
     loading.style.display = "none";
+
   }
+
 }
 
 
@@ -51,69 +59,69 @@ async function loadUsers() {
 ======================= */
 
 document
-  .getElementById("userForm")
-  .addEventListener("submit", async (e) => {
+.getElementById("userForm")
+.addEventListener("submit", async (e) => {
 
-    e.preventDefault();
+  e.preventDefault();
 
-    const mssv = document.getElementById("id").value.trim();
-    const name = document.getElementById("name").value.trim();
+  const mssv = document.getElementById("id").value.trim();
+  const name = document.getElementById("name").value.trim();
 
-    if (!mssv || !name) {
-      alert("Please fill all fields");
+  if (!mssv || !name) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  try {
+
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mssv, name })
+    });
+
+    if (!res.ok) {
+      alert("MSSV already exists");
       return;
     }
 
-    try {
-        const res = await fetch(API, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ mssv, name })
-        });
+    document.getElementById("userForm").reset();
+    loadUsers();
 
-        if (!res.ok) {
-          alert("MSSV already exists");
-          return;
-        }
+  } catch (err) {
 
-        document.getElementById("userForm").reset();
-        loadUsers();
+    alert("Error adding user");
 
-      } catch (err) {
+  }
 
-        alert("Error adding user");
-
-      }
-
-  });
+});
 
 
 /* =======================
    DELETE USER
 ======================= */
 
-async function deleteUser(id) {
+async function deleteUser(id){
 
   const confirmDelete = confirm("Delete this user?");
   if (!confirmDelete) return;
 
   try {
 
-    const res = await fetch(`${API}/${id}`, {
-      method: "DELETE"
+    const res = await fetch(`${API}/${id}`,{
+      method:"DELETE"
     });
 
-    if (!res.ok) {
-      throw new Error("Delete failed");
-    }
+    if(!res.ok) throw new Error("Delete failed");
 
     loadUsers();
 
-  } catch (err) {
+  } catch(err){
+
     alert("Error deleting user");
+
   }
+
 }
 
 
@@ -123,13 +131,11 @@ async function deleteUser(id) {
 
 async function viewUser(id){
 
-  try {
+  try{
 
     const res = await fetch(`${API}/${id}`);
 
-    if (!res.ok) {
-      throw new Error("User not found");
-    }
+    if(!res.ok) throw new Error("User not found");
 
     const user = await res.json();
 
@@ -146,7 +152,7 @@ async function viewUser(id){
 
     document.getElementById("detailModal").style.display = "flex";
 
-  } catch(err) {
+  }catch(err){
 
     alert("Error loading user");
 
@@ -160,8 +166,10 @@ async function viewUser(id){
 ======================= */
 
 function enableEdit(){
+
   document.getElementById("viewMode").style.display = "none";
   document.getElementById("editMode").style.display = "block";
+
 }
 
 
@@ -170,8 +178,10 @@ function enableEdit(){
 ======================= */
 
 function cancelEdit(){
+
   document.getElementById("viewMode").style.display = "block";
   document.getElementById("editMode").style.display = "none";
+
 }
 
 
@@ -185,16 +195,8 @@ async function updateUser(){
   const mssv = document.getElementById("editMssv").value.trim();
   const name = document.getElementById("editName").value.trim();
 
-await fetch(`${API}/${id}`,{
-  method:"PUT",
-  headers:{
-    "Content-Type":"application/json"
-  },
-  body:JSON.stringify({ mssv, name })
-});
-
-  if(!name){
-    alert("Name cannot be empty");
+  if(!mssv || !name){
+    alert("Fields cannot be empty");
     return;
   }
 
@@ -205,19 +207,20 @@ await fetch(`${API}/${id}`,{
       headers:{
         "Content-Type":"application/json"
       },
-      body:JSON.stringify({ name })
+      body:JSON.stringify({ mssv, name })
     });
 
-    if(!res.ok){
-      throw new Error("Update failed");
-    }
+    if(!res.ok) throw new Error("Update failed");
 
     closeModal();
     loadUsers();
 
   }catch(err){
+
     alert("Error updating user");
+
   }
+
 }
 
 
