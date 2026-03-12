@@ -15,7 +15,7 @@
 <h2>Add User</h2>
 
 <form id="userForm">
-<input type="text" id="mssv" placeholder="Student ID" required>
+<input type="text" id="mssv" placeholder="Student Code" required>
 <input type="text" id="name" placeholder="Name" required>
 <button type="submit" class="btn">Add User</button>
 </form>
@@ -44,21 +44,29 @@ Nhóm 10 - CRUD Users Demo
 
 <!-- USER DETAIL MODAL -->
 
+<!-- USER DETAIL MODAL -->
+
 <div id="detailModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal()">&times;</span>
-
     <h3>User Detail</h3>
 
+    <!-- VIEW MODE -->
     <div id="viewMode">
-      <p><b>ID:</b> <span id="detailId"></span></p>
+      <p><b>ID:</b> <span id="detailDbId"></span></p>
+      <p><b>MSSV:</b> <span id="detailId"></span></p>
       <p><b>Name:</b> <span id="detailName"></span></p>
       <button class="btn" onclick="enableEdit()">Edit</button>
-    </div>
 
+    </div>
+    <!-- EDIT MODE -->
     <div id="editMode" style="display:none">
+
       <p><b>ID:</b></p>
-      <input id="editId" disabled>
+      <input id="editDbId" disabled>
+
+      <p><b>MSSV:</b></p>
+      <input id="editMssv">
 
       <p><b>Name:</b></p>
       <input id="editName">
@@ -67,6 +75,7 @@ Nhóm 10 - CRUD Users Demo
         <button class="btn" onclick="updateUser()">Save</button>
         <button class="btn reload" onclick="cancelEdit()">Cancel</button>
       </div>
+
     </div>
 
   </div>
